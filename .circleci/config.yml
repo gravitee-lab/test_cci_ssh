@@ -1,0 +1,31 @@
+version: 2.1
+
+orbs:
+  secrethub: secrethub/cli@1.1.0
+
+jobs:
+  cicd_test:
+    docker:
+      - image: circleci/openjdk:11.0.3-jdk-stretch
+    environment:
+      DRY_RUN: << pipeline.parameters.dry_run >>
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "ac:88:23:8f:c6:0f:7d:f0:fc:df:73:20:34:56:02:6c"
+      - run:
+          name: Git SSH config
+          command: |
+                    echo "ac:88:23:8f:c6:0f:7d:f0:fc:df:73:20:34:56:02:6c"
+                    echo "checking existence of SSH Key based on key fingerprint [ac:88:23:8f:c6:0f:7d:f0:fc:df:73:20:34:56:02:6c] "
+                    ls -allh ${HOME}/.ssh/id_rsa_ac88238fc60f7df0fcdf73203456026c
+                    export GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa_ac88238fc60f7df0fcdf73203456026c'
+                    ssh -Ti ~/.ssh/id_rsa_ac88238fc60f7df0fcdf73203456026c git@github.com | true
+
+workflows:
+  cicd_test_wf:
+    jobs:
+      - cicd_test:
+          context:
+            - cicd-orchestrator
