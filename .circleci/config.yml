@@ -7,8 +7,6 @@ jobs:
   cicd_test:
     docker:
       - image: circleci/openjdk:11.0.3-jdk-stretch
-    environment:
-      DRY_RUN: << pipeline.parameters.dry_run >>
     steps:
       - checkout
       - add_ssh_keys:
